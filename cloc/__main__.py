@@ -39,6 +39,7 @@ class CLOC:
                 "  --ignore 'my_directory/*'       # Ignore all directories with this name\n"
             )
         )
+        self.parser.add_argument("--clocignore", type=str, help="The path to a '.clocignore' file relative to where this (cloc) is ran from which contains a list of files / dirs / extensions to ignore.\nWill override --ignore flag!")
 
         self.args = self.parser.parse_args()
 
@@ -61,14 +62,29 @@ class CLOC:
         self.print_loc()
 
     def calculate_ignore_types(self) -> None:
+        ignore = None
+
+        if self.args.clocignore is not None:
+            try:
+                with open(self.args.clocignore, "r") as f:
+                    ignore = f.read().split('\n')
+
+            except Exception as e:
+                print(f"Error while parsing clocignore: {e}!\n")
+                self.parser.print_help()
+                exit()
+
         self.ignore_exts = []
         self.ignore_dirs = []
         self.ignore_strict_files = []
         self.ignore_strict_dirs = []
 
-        if self.args.ignore is None: return
+        if self.args.ignore is None and ignore is None: return
 
-        for pattern in self.args.ignore:
+        if self.args.ignore is not None and ignore is None:
+            ignore = self.args.ignore
+
+        for pattern in ignore:
             if pattern[:2] == '*.':
                 self.ignore_exts.append(pattern[1:])
             elif pattern[-2:] == '/*':
@@ -81,7 +97,7 @@ class CLOC:
     def get_file_loc(self, file_path: Path) -> int:
         path = file_path
 
-        if path.name in self.ignore_strict_files or path.suffix in self.ignore_exts:
+        if path.name in self.ignore_strict_files or path.suffix in self.ignore_exts or path.suffix == "":
             return -1
 
         with open(path, 'rb') as f:
