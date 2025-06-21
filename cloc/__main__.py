@@ -1,6 +1,7 @@
 import argparse
 import os
 import json
+import importlib.resources
 
 from pathlib import Path
 from typing import List, Dict
@@ -49,7 +50,7 @@ class CLOC:
         self.path = Path(self.args.path_arg)
         
         try:
-            with open("languages.json", "r") as f:
+            with importlib.resources.open_text("cloc", "languages.json") as f:
                 self.languages = json.loads(f.read())
         except Exception as e:
             print(f"\nError while loading 'languages.json': {e}\n")
