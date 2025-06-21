@@ -1,9 +1,23 @@
 import argparse
 import os
+import json
+
 from pathlib import Path
 from typing import List, Dict
 
 class CLOC:
+    BCOLORS = {
+        "HEADER": '\033[95m',
+        "blue": '\033[94m',
+        "cyan": '\033[96m',
+        "green": '\033[92m',
+        "orange": '\033[93m',
+        "red": '\033[91m',
+        "ENDC": '\033[0m',
+        "BOLD": '\033[1m',
+        "UNDERLINE": '\033[4m'
+    }
+
     def __init__(self) -> None:
         self.parser = argparse.ArgumentParser(description="cloc (Count LOC) is a terminal utility to easily count lines of code in a file / project.", formatter_class=argparse.RawTextHelpFormatter)
         self.parser.add_argument("path_arg", type=str, help="The path to the file / directory cloc should scan.")
@@ -33,9 +47,16 @@ class CLOC:
             exit()
 
         self.path = Path(self.args.path_arg)
+        
+        try:
+            with open("languages.json", "r") as f:
+                self.languages = json.loads(f.read())
+        except Exception as e:
+            print(f"\nError while loading 'languages.json': {e}\n")
+            self.parser.print_help()
+            exit()
 
         self.calculate_ignore_types()
-
         self.print_loc()
 
     def calculate_ignore_types(self) -> None:
@@ -69,7 +90,7 @@ class CLOC:
         if path in self.ignore_strict_dirs or path.name in self.ignore_dirs:
             return []
 
-        print(f"Exploring: {path}...")
+        #print(f"Exploring: {path}...")
 
         dir_loc = {}
 
@@ -87,12 +108,42 @@ class CLOC:
 
         return dir_loc
 
+    def get_ext_usage(self, files_loc: Dict[Path, int]) -> Dict[str, int]:
+        ext_usage = {}
+
+        for file, loc in files_loc.items():
+            if file.suffix in ext_usage:
+                ext_usage[file.suffix] += loc
+            else:
+                ext_usage[file.suffix] = loc
+
+        return ext_usage
+
+    def fmt_ext_usage(self, ext_loc: Dict[str, int]) -> str:
+        fmt_text = ""
+
+        for ext, loc in ext_loc.items():
+            if ext in self.languages:
+                start_char = self.BCOLORS.get(self.languages[ext]["color"], "")
+                end_char = self.BCOLORS["ENDC"]
+                if start_char == "": end_char = ""
+
+                fmt_text += f"{start_char}{self.languages[ext]["name"]} ({ext}): {loc}{end_char}\n"
+            else:
+                fmt_text += f"{ext}: {loc}\n"
+
+        return fmt_text
+
     def print_loc(self) -> None:
         if self.path.is_file():
             print(self.get_file_loc(self.path))
         else:
-            print(self.get_dir_files_loc(self.path))
-            print(sum(self.get_dir_files_loc(self.path).values()))
+            files_loc = self.get_dir_files_loc(self.path)
+
+            print(f"Total LOC: {sum(files_loc.values())}")
+            
+            #print(f"File extentions breakdown: {self.get_ext_usage(files_loc)}")
+            print(self.fmt_ext_usage(self.get_ext_usage(files_loc)))
 
 if __name__ == "__main__":
     cloc = CLOC()
