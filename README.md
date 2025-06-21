@@ -3,13 +3,34 @@
 ## Description
 cloc (Count LOC) is a simple terminal utility to easily count lines of code in a file / project. 
 
+## Why I Made This?
+I created cloc to provide a lightweight and easy to use terminal-based LOC counter with flexible ignore patterns.  
+Unlike existing tools, it supports recursive ignore patterns and simple wildcard filtering to streamline codebase analysis without making it too complex.
+
+## Features
+ - Counts lines of code in files and directories recursively
+ - Allows easy exclusion of files, directories, and patterns with wildcards
+ - Simple help menu and thorough documentation
+
 ## Installation
 ### Windows, Linux & Mac
 1. Make sure you have a recent version of Python installed.
 2. Run the command `pip install plazma-cloc` to install.
 3. Done.
 
+## Running The Binary
+You can run the pre-built Linux binary directly from the terminal without installing Python as such:
+
+```bash
+./cloc -h
+./cloc /path/to/project --ignore "*.test"
+```
+
+> Note: See **Usage** below for more information on how to use...
+
 ## Usage
+> Note: If using the binary, replace 'cloc' with './cloc'. If using the pip installation, replace 'cloc' with 'python -m cloc'.
+
 1. Open a terminal and run the command `cloc <PATH_TO_FILE_OR_PROJECT>`
 2. For help run the command `cloc -h`
 
@@ -33,7 +54,7 @@ You can also ignore multiple directories with this same syntax.
 E.G. `cloc your_project_folder --ignore "your_directory" "your_other_directory"`
 
 ### Ignoring files with certain file extensions
-To ignore all files with a certain file extension use `cloc your_project_folder --ignore "*.txt"
+To ignore all files with a certain file extension use: `cloc your_project_folder --ignore "*.txt"`
 
 The '*' character is a wildcard character and tells the program it means every file with the file extension after the wildcard.
 
