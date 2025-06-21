@@ -85,6 +85,8 @@ class CLOC:
             ignore = self.args.ignore
 
         for pattern in ignore:
+            if pattern.strip() == "": continue
+
             if pattern[:2] == '*.':
                 self.ignore_exts.append(pattern[1:])
             elif pattern[-2:] == '/*':

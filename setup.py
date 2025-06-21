@@ -5,7 +5,7 @@ with open('README.md', 'rb') as f:
 
 setup(
     name='plazma-cloc',
-    version='1.2.0',
+    version='1.2.2',
     packages=find_packages(),
     entry_points={
         'console_scripts': [

@@ -1,6 +1,6 @@
 Metadata-Version: 2.4
 Name: plazma-cloc
-Version: 1.2.1
+Version: 1.2.2
 Summary: cloc (Count LOC) is a terminal utility to easily count lines of code in a file / project.
 Author-email: CaptainDeathead <unstableplazma@gmail.com>
 License: MIT License
