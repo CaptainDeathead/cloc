@@ -140,10 +140,9 @@ class CLOC:
         else:
             files_loc = self.get_dir_files_loc(self.path)
 
-            print(f"Total LOC: {sum(files_loc.values())}")
-            
             #print(f"File extentions breakdown: {self.get_ext_usage(files_loc)}")
             print(self.fmt_ext_usage(self.get_ext_usage(files_loc)))
+            print(f"Total LOC: {sum(files_loc.values())}")
 
 if __name__ == "__main__":
     cloc = CLOC()
